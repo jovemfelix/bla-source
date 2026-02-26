@@ -20,7 +20,7 @@ spec:
         git clone $(params.gitops-repo-url) gitops-repo
         cd gitops-repo
         
-        sed -i 's|image: .*|image: image-registry.openshift-image-registry.svc:5000/pac-workshop/my-app:$(params.image-tag)|g' deployment.yaml
+        sed -i 's|image: .*|image: image-registry.openshift-image-registry.svc:5000/$(context.taskRun.namespace)/my-app:$(params.image-tag)|g' deployment.yaml
         
         git config user.email "pipeline@openshift.com"
         git config user.name "OpenShift Pipeline"
