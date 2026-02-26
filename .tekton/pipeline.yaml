@@ -33,7 +33,7 @@ spec:
           workspace: shared-workspace
       params:
         - name: IMAGE
-          value: image-registry.openshift-image-registry.svc:5000/pac-workshop/my-app:$(params.image-tag)
+          value: image-registry.openshift-image-registry.svc:5000/$(context.pipelineRun.namespace)/my-app:$(params.image-tag)
           
     - name: update-gitops
       taskRef:
