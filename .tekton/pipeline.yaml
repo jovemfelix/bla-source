@@ -1,0 +1,51 @@
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: build-and-update-gitops
+spec:
+  workspaces:
+    - name: shared-workspace
+  params:
+    - name: source-repo-url
+      type: string
+    - name: gitops-repo-url
+      type: string
+    - name: image-tag
+      type: string
+  tasks:
+    - name: fetch-source
+      taskRef:
+        name: git-clone
+      workspaces:
+        - name: output
+          workspace: shared-workspace
+      params:
+        - name: url
+          value: $(params.source-repo-url)
+          
+    - name: build-image
+      taskRef:
+        name: buildah
+      runAfter:
+        - fetch-source
+      workspaces:
+        - name: source
+          workspace: shared-workspace
+      params:
+        - name: IMAGE
+          value: image-registry.openshift-image-registry.svc:5000/pac-workshop/my-app:$(params.image-tag)
+          
+    - name: update-gitops
+      taskRef:
+        name: update-gitops-repo
+      runAfter:
+        - build-image
+      retries: 1
+      workspaces:
+        - name: source
+          workspace: shared-workspace
+      params:
+        - name: gitops-repo-url
+          value: $(params.gitops-repo-url)
+        - name: image-tag
+          value: $(params.image-tag)

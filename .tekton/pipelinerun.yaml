@@ -3,27 +3,25 @@ kind: PipelineRun
 metadata:
   generateName: pac-build-and-update-
   annotations:
-    # Estas Annotations le dicen a OpenShift cuándo ejecutar este Pipeline
     pipelinesascode.tekton.dev/on-event: "[push]"
     pipelinesascode.tekton.dev/on-target-branch: "[pac]"
-    # Le decimos a PaC que este Pipeline ya existe en el namespace local
-    pipelinesascode.tekton.dev/pipeline: "build-and-update-gitops"
-    # También es una buena práctica decirle que use las Tasks locales
-    pipelinesascode.tekton.dev/task: "[git-clone, buildah, update-gitops-repo]"
+    # Le decimos a PaC que descargue las Tasks oficiales de internet
+    pipelinesascode.tekton.dev/task: "[git-clone, buildah]"
 spec:
-  # ¡Reutilizamos el Pipeline que ya tenemos en el Cluster!
   pipelineRef:
     name: build-and-update-gitops
   serviceAccountName: pipeline
+  podTemplate:
+    securityContext:
+      fsGroup: 65532 
   workspaces:
     - name: shared-workspace
       persistentVolumeClaim:
         claimName: pipeline-workspace
   params:
-    # PaC inyecta estas variables dinámicamente usando el formato {{var}}
     - name: source-repo-url
       value: "{{repo_url}}" 
     - name: gitops-repo-url
       value: "https://github.com/jovemfelix/bla-config.git"
     - name: image-tag
-      value: "{{revision}}" # Esto inyecta el Commit SHA automáticamente
+      value: "{{revision}}"
