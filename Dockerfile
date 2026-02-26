@@ -1,7 +1,7 @@
 FROM nginx:alpine
 
 # Agregamos nuestra página web
-RUN echo "<h1>Hello from OpenShift CI/CD Pipeline!</h1>" > /usr/share/nginx/html/index.html
+RUN echo "<h1>Hola from OpenShift CI/CD Pipeline!</h1>" > /usr/share/nginx/html/index.html
 
 # Dar permisos a los directorios que NGINX necesita modificar
 RUN chmod -R 777 /var/cache/nginx /var/run /var/log/nginx /etc/nginx/conf.d
