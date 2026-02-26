@@ -6,6 +6,8 @@ metadata:
     # Estas Annotations le dicen a OpenShift cuándo ejecutar este Pipeline
     pipelinesascode.tekton.dev/on-event: "[push]"
     pipelinesascode.tekton.dev/on-target-branch: "[pac]"
+    # También es una buena práctica decirle que use las Tasks locales
+    pipelinesascode.tekton.dev/task: "[git-clone, buildah, update-gitops-repo]"
 spec:
   # ¡Reutilizamos el Pipeline que ya tenemos en el Cluster!
   pipelineRef:
